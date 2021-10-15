@@ -13,29 +13,19 @@
  * =)
 *****************************/
 
-#ifndef __VTUX_FRAME_HPP__
-#define __VTUX_FRAME_HPP__
+#ifndef __VTUX_METADATA_HPP__
+#define __VTUX_METADATA_HPP__
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
     #include <wx/wx.h>
 #endif
 
-#include "VtuxMetadata.hpp"
 
-enum
-{
-    ID_Hello = 1
-};
+#define VTUX_NAME "visual tux"
+#define VTUX_VERSION "0.0.4"
 
-class MyFrame : public wxFrame
-{
-public:
-    MyFrame();
-private:
-    void OnHello(wxCommandEvent& event);
-    void OnExit(wxCommandEvent& event);
-    void OnAbout(wxCommandEvent& event);
-};
+#define MDCONCAT(STRING) (STRING"" VTUX_NAME"" " at version """ VTUX_VERSION)
+
 
 #endif
