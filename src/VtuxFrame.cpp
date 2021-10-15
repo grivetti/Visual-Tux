@@ -14,40 +14,57 @@
 
 #include "VtuxFrame.hpp"
 
+BEGIN_EVENT_TABLE(VTux, wxFrame)
+    EVT_MENU(ID_SAVE, VTux::OnSave)
+    EVT_MENU(ID_OPEN, VTux::OnOpen)
+    EVT_MENU(ID_EXIT, VTux::OnExit)
+END_EVENT_TABLE()
 
-MyFrame::MyFrame()
-        : wxFrame(NULL, wxID_ANY, VTUX_NAME)
+VTux::VTux()
+        : wxFrame(NULL, wxID_ANY, VTUX_NAME,wxDefaultPosition,wxSize(800,600))
 {
-    wxMenu *menuFile = new wxMenu;
-    menuFile->Append(ID_Hello, "&Hello...\tCtrl-H",
-                     "Help string shown in status bar for this menu item");
-    menuFile->AppendSeparator();
-    menuFile->Append(wxID_EXIT);
-    wxMenu *menuHelp = new wxMenu;
-    menuHelp->Append(wxID_ABOUT);
-    wxMenuBar *menuBar = new wxMenuBar;
-    menuBar->Append(menuFile, "&File");
-    menuBar->Append(menuHelp, "&Help");
-    SetMenuBar(menuBar);
-    CreateStatusBar();
-    SetStatusText(MDCONCAT("welcome to "));
-    Bind(wxEVT_MENU, &MyFrame::OnHello, this, ID_Hello);
-    Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
-    Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
+    this->menu = new wxMenuBar();
+    this->file = new wxMenu();
+    this->file->Append(ID_SAVE,wxT("&Save File\tCtrl-S"));
+    this->file->Append(ID_OPEN, wxT("&Open File\tCtrl-O"));
+    this->file->AppendSeparator();
+    this->file->Append(ID_EXIT,wxT("&Exit\tCtrl-Q"));
+    this->menu->Append(file, wxT("&File"));
+    this->SetMenuBar(menu); 
+    this->text = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER | wxTE_MULTILINE);
 }
 
-void MyFrame::OnExit(wxCommandEvent& event)
-{
-    Close(true);
-}
-
-
-void MyFrame::OnAbout(wxCommandEvent& event)
+void VTux::OnAbout(wxCommandEvent& event)
 {
     wxMessageBox(MDCONCAT("This is the "),
                  MDCONCAT("About "), wxOK | wxICON_INFORMATION);
 }
-void MyFrame::OnHello(wxCommandEvent& event)
+void VTux::OnHello(wxCommandEvent& event)
 {
     wxLogMessage(MDCONCAT("Hello from "));
+}
+
+void VTux::OnSave(wxCommandEvent &event)
+{
+    wxFileDialog *saveDialog = new wxFileDialog(this, wxT("Save File"), wxT(""), wxT(""), wxT("Header Files (*.h)|*.h|C++ Files (*.cpp)|*.cpp"), wxFD_SAVE);
+    int response = saveDialog->ShowModal();
+    if(response == wxID_OK)
+    {
+        this->text->SaveFile(saveDialog->GetPath());
+    }
+}
+
+void VTux::OnOpen(wxCommandEvent &event) {
+    wxFileDialog *openDialog = new wxFileDialog(this, wxT("Open File"), wxT(""), wxT(""),
+                                                wxT("Header Files (*.h)|*.h|C++ Files (*.cpp)|*.cpp"), wxFD_OPEN);
+    int response = openDialog->ShowModal();
+    if (response == wxID_OK) {
+        this->text->LoadFile(openDialog->GetPath());
+    }
+}
+
+void VTux::OnExit(wxCommandEvent& event)
+{
+    this->Close(true);
+    this->Destroy();
 }

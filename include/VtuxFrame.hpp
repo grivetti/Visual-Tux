@@ -25,17 +25,26 @@
 
 enum
 {
-    ID_Hello = 1
+    ID_HELLO = 1,
+    ID_SAVE,
+    ID_OPEN,
+    ID_EXIT,
 };
 
-class MyFrame : public wxFrame
+class VTux : public wxFrame
 {
 public:
-    MyFrame();
+    VTux();
 private:
+    wxMenuBar *menu;
+    wxMenu *file;
+    wxTextCtrl *text;
     void OnHello(wxCommandEvent& event);
-    void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
+    void OnSave(wxCommandEvent &event);
+    void OnOpen(wxCommandEvent &event);
+    void OnExit(wxCommandEvent &event);
+    DECLARE_EVENT_TABLE()
 };
 
 #endif
