@@ -13,8 +13,8 @@
  * =)
 *****************************/
 
-#ifndef __VTUX_APP_HPP__
-#define __VTUX_APP_HPP__
+#ifndef __VTUX_METADATA_HPP__
+#define __VTUX_METADATA_HPP__
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
@@ -22,13 +22,10 @@
 #endif
 
 
-#include "VtuxFrame.hpp"
+#define VTUX_NAME "visual tux"
+#define VTUX_VERSION "0.0.4"
 
+#define MDCONCAT(STRING) (STRING"" VTUX_NAME"" " at version """ VTUX_VERSION)
 
-class MyApp : public wxApp
-{
-public:
-    virtual bool OnInit();
-};
 
 #endif

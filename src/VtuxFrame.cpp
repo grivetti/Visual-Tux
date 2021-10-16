@@ -15,39 +15,122 @@
 #include "VtuxFrame.hpp"
 
 
-MyFrame::MyFrame()
-        : wxFrame(NULL, wxID_ANY, "Hello World")
+VTux::VTux()
+        : wxFrame(NULL, wxID_ANY, VTUX_NAME,wxDefaultPosition,wxSize(800,600))
 {
-    wxMenu *menuFile = new wxMenu;
-    menuFile->Append(ID_Hello, "&Hello...\tCtrl-H",
-                     "Help string shown in status bar for this menu item");
-    menuFile->AppendSeparator();
-    menuFile->Append(wxID_EXIT);
-    wxMenu *menuHelp = new wxMenu;
-    menuHelp->Append(wxID_ABOUT);
-    wxMenuBar *menuBar = new wxMenuBar;
-    menuBar->Append(menuFile, "&File");
-    menuBar->Append(menuHelp, "&Help");
-    SetMenuBar(menuBar);
-    CreateStatusBar();
-    SetStatusText("Welcome to wxWidgets!");
-    Bind(wxEVT_MENU, &MyFrame::OnHello, this, ID_Hello);
-    Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
-    Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
+    this->text = new CodeCtrl(this);
+    this->menu = new wxMenuBar();
+    this->file = new wxMenu();
+    this->file->Append(ID_NEW, wxT("&New File\tCtrl-N"));
+    this->file->Append(ID_OPEN, wxT("&Open File\tCtrl-O"));
+    this->file->AppendSeparator();
+    this->file->Append(ID_SAVE,wxT("&Save File\tCtrl-S"));
+    this->file->Append(ID_SAVEAS,wxT("&Save File as"));
+    this->file->AppendSeparator();
+    this->file->Append(ID_EXIT,wxT("&Exit\tCtrl-Q"));
+    this->menu->Append(file, wxT("&File"));
+    this->SetMenuBar(menu);
+    this->CreateStatusBar();
+    this->SetStatusText("A C/C++ free software IDE for linux");
+    this->Centre();
+
+    this->Bind(wxEVT_MENU, &VTux::OnNew, this, ID_NEW);
+    this->Bind(wxEVT_MENU, &VTux::OnOpen, this, ID_OPEN);
+    this->Bind(wxEVT_MENU, &VTux::OnSave, this, ID_SAVE);
+    this->Bind(wxEVT_MENU, &VTux::OnSaveAs, this, ID_SAVEAS);
+    this->Bind(wxEVT_MENU, &VTux::OnExit, this, ID_EXIT);
+	this->Bind(wxEVT_STC_CHANGE, &VTux::OnModified, this);
 }
 
-void MyFrame::OnExit(wxCommandEvent& event)
+
+void VTux::OnAbout(wxCommandEvent& event)
 {
-    Close(true);
+    wxMessageBox(MDCONCAT("This is the "),
+                 MDCONCAT("About "), wxOK | wxICON_INFORMATION);
 }
 
 
-void MyFrame::OnAbout(wxCommandEvent& event)
+void VTux::OnNew(wxCommandEvent& event)
 {
-    wxMessageBox("This is a wxWidgets Hello World example",
-                 "About Hello World", wxOK | wxICON_INFORMATION);
+    this->fileName = "";
+    this->text->ClearAll();
+    this->SetStatusText("New file created");
 }
-void MyFrame::OnHello(wxCommandEvent& event)
+
+
+void VTux::OnOpen(wxCommandEvent &event) {
+    wxFileDialog *openDialog = new wxFileDialog(this, wxT("Open File"), wxT(""), wxT(""),
+                                                wxT("C Files (*.c)|*.c|C++ Files (*.cpp)|*.cpp|Header Files (*.h)|*.h"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    int response = openDialog->ShowModal();
+    
+    if (response == wxID_OK)
+    {
+        this->fileName = openDialog->GetPath();
+        if (this->text->LoadFile(this->fileName))
+        {
+            this->SetStatusText(this->fileName);
+        }else
+        {
+            this->SetStatusText("Could not load file: " + this->fileName);
+        }
+    }
+}
+
+
+void VTux::OnSave(wxCommandEvent &event)
 {
-    wxLogMessage("Hello world from wxWidgets!");
+    if (this->fileName.length() > 0) {
+        if (this->text->GetModify()) {
+            if (this->text->SaveFile(fileName))
+            {
+                this->SetStatusText("Saving File: " + this->fileName);
+            }else
+            {
+                this->SetStatusText("Could not save File: " + this->fileName);
+            }
+        }
+    }
+    else
+    {
+        this->OnSaveAs(event);
+    }
+}
+
+
+void VTux::OnSaveAs(wxCommandEvent &event) {
+    wxFileDialog *openDialog = new wxFileDialog(this, wxT("Open File"), wxT(""), wxT(""),
+                                                wxT("C Files (*.c)|*.c|C++ Files (*.cpp)|*.cpp|Header Files (*.h)|*.h"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    int response = openDialog->ShowModal();
+    
+    if (response == wxID_OK)
+    {
+        this->fileName = openDialog->GetPath();
+        if (this->text->SaveFile(this->fileName))
+        {
+            this->SetStatusText(this->fileName);
+        }else
+        {
+            this->SetStatusText("Could not load file: " + this->fileName);
+        }
+    }
+}
+
+
+void VTux::OnExit(wxCommandEvent& event)
+{
+    this->Close(true);
+    this->Destroy();
+}
+
+
+void VTux::OnModified(wxStyledTextEvent & event)
+{
+	if (this->text->GetModify())
+    {
+        this->SetStatusText("File Modified");
+    }
+    else
+    {
+        this->SetStatusText("");
+    }
 }

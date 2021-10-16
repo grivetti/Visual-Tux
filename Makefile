@@ -4,7 +4,7 @@ CXX = g++
 CXXFLAGS= -Werror -Wall  -O2
 
 WX_CXXFLAGS := $(shell wx-config --cxxflags)
-WX_LIBS := $(shell wx-config --libs)
+WX_LIBS := $(shell wx-config --libs std,stc)
 
 SRCDIR=src
 INCLUDEDIR=include
