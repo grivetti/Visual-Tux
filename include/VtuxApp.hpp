@@ -24,6 +24,7 @@
 
 #include "VtuxFrame.hpp"
 
+
 class MyApp : public wxApp
 {
 public:

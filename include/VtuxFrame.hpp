@@ -20,31 +20,40 @@
 #ifndef WX_PRECOMP
     #include <wx/wx.h>
 #endif
+#include <wx/stc/stc.h>
+
+
+#include "VtuxCodeCtrl.hpp"
 
 #include "VtuxMetadata.hpp"
 
 enum
 {
-    ID_HELLO = 1,
+    ID_NEW = 10001,
     ID_SAVE,
+    ID_SAVEAS,
+    ID_MODIFIED,
     ID_OPEN,
     ID_EXIT,
 };
+
 
 class VTux : public wxFrame
 {
 public:
     VTux();
-private:
+protected:
     wxMenuBar *menu;
     wxMenu *file;
-    wxTextCtrl *text;
-    void OnHello(wxCommandEvent& event);
+    CodeCtrl *text;
+    wxString fileName;
+    void OnNew(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
-    void OnSave(wxCommandEvent &event);
     void OnOpen(wxCommandEvent &event);
     void OnExit(wxCommandEvent &event);
-    DECLARE_EVENT_TABLE()
+    void OnSave(wxCommandEvent &event);
+    void OnSaveAs(wxCommandEvent& event);
+    void OnModified(wxStyledTextEvent& event);
 };
 
 #endif

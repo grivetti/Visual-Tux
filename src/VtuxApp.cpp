@@ -14,7 +14,6 @@
 
 #include "VtuxApp.hpp"
 
-IMPLEMENT_APP(MyApp);
 
 bool MyApp::OnInit()
 {
@@ -22,3 +21,5 @@ bool MyApp::OnInit()
     frame->Show(true);
     return true;
 }
+
+IMPLEMENT_APP(MyApp);
